@@ -22,6 +22,7 @@ const leaderboardEl = document.getElementById("leaderboard");
 const pointsTableEl = document.getElementById("pointsTable");
 const matchesEl = document.getElementById("matches");
 const messageEl = document.getElementById("message");
+const isGithubPages = window.location.hostname.endsWith("github.io");
 
 function showMessage(text, type = "") {
   messageEl.textContent = text;
@@ -277,7 +278,17 @@ importFileInput.addEventListener("change", (e) => {
 
 // Herstel vorige sessie
 const saved = localStorage.getItem("wk-poule-text");
-if (saved) {
+
+if (isGithubPages) {
+  // Op GitHub Pages altijd eerst de live repo-data gebruiken.
+  loadRemoteData(true).then((loaded) => {
+    if (!loaded && saved) {
+      importPasteArea.value = saved;
+      loadAndRender(saved);
+      showMessage("Live data niet bereikbaar, lokale opgeslagen data geladen.", "error");
+    }
+  });
+} else if (saved) {
   importPasteArea.value = saved;
   loadAndRender(saved);
 } else {
