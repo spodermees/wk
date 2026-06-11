@@ -8,7 +8,658 @@
       "kickoff": "2026-06-12T18:00:00.000Z",
       "homeScore": null,
       "awayScore": null
+    },
+    {
+      "id": 2,
+      "group": "A",
+      "homeTeam": "Mexico",
+      "awayTeam": "Zuid-Afrika",
+      "kickoff": "2026-06-11T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 3,
+      "group": "A",
+      "homeTeam": "Zuid-Korea",
+      "awayTeam": "Tsjechie",
+      "kickoff": "2026-06-11T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 4,
+      "group": "A",
+      "homeTeam": "Mexico",
+      "awayTeam": "Zuid-Korea",
+      "kickoff": "2026-06-18T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 5,
+      "group": "A",
+      "homeTeam": "Tsjechie",
+      "awayTeam": "Zuid-Afrika",
+      "kickoff": "2026-06-18T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 6,
+      "group": "A",
+      "homeTeam": "Tsjechie",
+      "awayTeam": "Mexico",
+      "kickoff": "2026-06-24T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 7,
+      "group": "A",
+      "homeTeam": "Zuid-Afrika",
+      "awayTeam": "Zuid-Korea",
+      "kickoff": "2026-06-24T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 8,
+      "group": "B",
+      "homeTeam": "Canada",
+      "awayTeam": "Bosnie en Herzegovina",
+      "kickoff": "2026-06-12T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 9,
+      "group": "B",
+      "homeTeam": "Qatar",
+      "awayTeam": "Zwitserland",
+      "kickoff": "2026-06-12T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 10,
+      "group": "B",
+      "homeTeam": "Canada",
+      "awayTeam": "Qatar",
+      "kickoff": "2026-06-18T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 11,
+      "group": "B",
+      "homeTeam": "Zwitserland",
+      "awayTeam": "Bosnie en Herzegovina",
+      "kickoff": "2026-06-18T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 12,
+      "group": "B",
+      "homeTeam": "Zwitserland",
+      "awayTeam": "Canada",
+      "kickoff": "2026-06-24T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 13,
+      "group": "B",
+      "homeTeam": "Bosnie en Herzegovina",
+      "awayTeam": "Qatar",
+      "kickoff": "2026-06-24T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 14,
+      "group": "C",
+      "homeTeam": "Brazilie",
+      "awayTeam": "Marokko",
+      "kickoff": "2026-06-13T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 15,
+      "group": "C",
+      "homeTeam": "Haiti",
+      "awayTeam": "Schotland",
+      "kickoff": "2026-06-13T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 16,
+      "group": "C",
+      "homeTeam": "Brazilie",
+      "awayTeam": "Haiti",
+      "kickoff": "2026-06-19T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 17,
+      "group": "C",
+      "homeTeam": "Schotland",
+      "awayTeam": "Marokko",
+      "kickoff": "2026-06-19T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 18,
+      "group": "C",
+      "homeTeam": "Schotland",
+      "awayTeam": "Brazilie",
+      "kickoff": "2026-06-24T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 19,
+      "group": "C",
+      "homeTeam": "Marokko",
+      "awayTeam": "Haiti",
+      "kickoff": "2026-06-24T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 20,
+      "group": "D",
+      "homeTeam": "Verenigde Staten",
+      "awayTeam": "Paraguay",
+      "kickoff": "2026-06-12T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 21,
+      "group": "D",
+      "homeTeam": "Australie",
+      "awayTeam": "Turkije",
+      "kickoff": "2026-06-12T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 22,
+      "group": "D",
+      "homeTeam": "Verenigde Staten",
+      "awayTeam": "Australie",
+      "kickoff": "2026-06-19T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 23,
+      "group": "D",
+      "homeTeam": "Turkije",
+      "awayTeam": "Paraguay",
+      "kickoff": "2026-06-19T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 24,
+      "group": "D",
+      "homeTeam": "Turkije",
+      "awayTeam": "Verenigde Staten",
+      "kickoff": "2026-06-25T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 25,
+      "group": "D",
+      "homeTeam": "Paraguay",
+      "awayTeam": "Australie",
+      "kickoff": "2026-06-25T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 26,
+      "group": "E",
+      "homeTeam": "Duitsland",
+      "awayTeam": "Curacao",
+      "kickoff": "2026-06-14T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 27,
+      "group": "E",
+      "homeTeam": "Ivoorkust",
+      "awayTeam": "Ecuador",
+      "kickoff": "2026-06-14T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 28,
+      "group": "E",
+      "homeTeam": "Duitsland",
+      "awayTeam": "Ivoorkust",
+      "kickoff": "2026-06-20T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 29,
+      "group": "E",
+      "homeTeam": "Ecuador",
+      "awayTeam": "Curacao",
+      "kickoff": "2026-06-20T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 30,
+      "group": "E",
+      "homeTeam": "Ecuador",
+      "awayTeam": "Duitsland",
+      "kickoff": "2026-06-25T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 31,
+      "group": "E",
+      "homeTeam": "Curacao",
+      "awayTeam": "Ivoorkust",
+      "kickoff": "2026-06-25T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 32,
+      "group": "F",
+      "homeTeam": "Nederland",
+      "awayTeam": "Japan",
+      "kickoff": "2026-06-14T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 33,
+      "group": "F",
+      "homeTeam": "Zweden",
+      "awayTeam": "Tunesie",
+      "kickoff": "2026-06-14T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 34,
+      "group": "F",
+      "homeTeam": "Nederland",
+      "awayTeam": "Zweden",
+      "kickoff": "2026-06-20T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 35,
+      "group": "F",
+      "homeTeam": "Tunesie",
+      "awayTeam": "Japan",
+      "kickoff": "2026-06-20T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 36,
+      "group": "F",
+      "homeTeam": "Tunesie",
+      "awayTeam": "Nederland",
+      "kickoff": "2026-06-25T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 37,
+      "group": "F",
+      "homeTeam": "Japan",
+      "awayTeam": "Zweden",
+      "kickoff": "2026-06-25T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 38,
+      "group": "G",
+      "homeTeam": "Belgie",
+      "awayTeam": "Egypte",
+      "kickoff": "2026-06-15T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 39,
+      "group": "G",
+      "homeTeam": "Iran",
+      "awayTeam": "Nieuw-Zeeland",
+      "kickoff": "2026-06-15T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 40,
+      "group": "G",
+      "homeTeam": "Belgie",
+      "awayTeam": "Iran",
+      "kickoff": "2026-06-21T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 41,
+      "group": "G",
+      "homeTeam": "Nieuw-Zeeland",
+      "awayTeam": "Egypte",
+      "kickoff": "2026-06-21T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 42,
+      "group": "G",
+      "homeTeam": "Nieuw-Zeeland",
+      "awayTeam": "Belgie",
+      "kickoff": "2026-06-26T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 43,
+      "group": "G",
+      "homeTeam": "Egypte",
+      "awayTeam": "Iran",
+      "kickoff": "2026-06-26T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 44,
+      "group": "H",
+      "homeTeam": "Spanje",
+      "awayTeam": "Kaapverdie",
+      "kickoff": "2026-06-15T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 45,
+      "group": "H",
+      "homeTeam": "Saoedi-Arabie",
+      "awayTeam": "Uruguay",
+      "kickoff": "2026-06-15T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 46,
+      "group": "H",
+      "homeTeam": "Spanje",
+      "awayTeam": "Saoedi-Arabie",
+      "kickoff": "2026-06-21T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 47,
+      "group": "H",
+      "homeTeam": "Uruguay",
+      "awayTeam": "Kaapverdie",
+      "kickoff": "2026-06-21T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 48,
+      "group": "H",
+      "homeTeam": "Uruguay",
+      "awayTeam": "Spanje",
+      "kickoff": "2026-06-26T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 49,
+      "group": "H",
+      "homeTeam": "Kaapverdie",
+      "awayTeam": "Saoedi-Arabie",
+      "kickoff": "2026-06-26T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 50,
+      "group": "I",
+      "homeTeam": "Frankrijk",
+      "awayTeam": "Senegal",
+      "kickoff": "2026-06-16T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 51,
+      "group": "I",
+      "homeTeam": "Irak",
+      "awayTeam": "Noorwegen",
+      "kickoff": "2026-06-16T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 52,
+      "group": "I",
+      "homeTeam": "Frankrijk",
+      "awayTeam": "Irak",
+      "kickoff": "2026-06-22T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 53,
+      "group": "I",
+      "homeTeam": "Noorwegen",
+      "awayTeam": "Senegal",
+      "kickoff": "2026-06-22T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 54,
+      "group": "I",
+      "homeTeam": "Noorwegen",
+      "awayTeam": "Frankrijk",
+      "kickoff": "2026-06-26T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 55,
+      "group": "I",
+      "homeTeam": "Senegal",
+      "awayTeam": "Irak",
+      "kickoff": "2026-06-26T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 56,
+      "group": "J",
+      "homeTeam": "Argentinie",
+      "awayTeam": "Algerije",
+      "kickoff": "2026-06-16T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 57,
+      "group": "J",
+      "homeTeam": "Oostenrijk",
+      "awayTeam": "Jordanie",
+      "kickoff": "2026-06-16T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 58,
+      "group": "J",
+      "homeTeam": "Argentinie",
+      "awayTeam": "Oostenrijk",
+      "kickoff": "2026-06-22T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 59,
+      "group": "J",
+      "homeTeam": "Jordanie",
+      "awayTeam": "Algerije",
+      "kickoff": "2026-06-22T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 60,
+      "group": "J",
+      "homeTeam": "Jordanie",
+      "awayTeam": "Argentinie",
+      "kickoff": "2026-06-27T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 61,
+      "group": "J",
+      "homeTeam": "Algerije",
+      "awayTeam": "Oostenrijk",
+      "kickoff": "2026-06-27T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 62,
+      "group": "K",
+      "homeTeam": "Portugal",
+      "awayTeam": "DR Congo",
+      "kickoff": "2026-06-17T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 63,
+      "group": "K",
+      "homeTeam": "Oezbekistan",
+      "awayTeam": "Colombia",
+      "kickoff": "2026-06-17T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 64,
+      "group": "K",
+      "homeTeam": "Portugal",
+      "awayTeam": "Oezbekistan",
+      "kickoff": "2026-06-23T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 65,
+      "group": "K",
+      "homeTeam": "Colombia",
+      "awayTeam": "DR Congo",
+      "kickoff": "2026-06-23T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 66,
+      "group": "K",
+      "homeTeam": "Colombia",
+      "awayTeam": "Portugal",
+      "kickoff": "2026-06-27T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 67,
+      "group": "K",
+      "homeTeam": "DR Congo",
+      "awayTeam": "Oezbekistan",
+      "kickoff": "2026-06-27T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 68,
+      "group": "L",
+      "homeTeam": "Engeland",
+      "awayTeam": "Kroatie",
+      "kickoff": "2026-06-17T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 69,
+      "group": "L",
+      "homeTeam": "Ghana",
+      "awayTeam": "Panama",
+      "kickoff": "2026-06-17T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 70,
+      "group": "L",
+      "homeTeam": "Engeland",
+      "awayTeam": "Ghana",
+      "kickoff": "2026-06-23T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 71,
+      "group": "L",
+      "homeTeam": "Panama",
+      "awayTeam": "Kroatie",
+      "kickoff": "2026-06-23T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 72,
+      "group": "L",
+      "homeTeam": "Panama",
+      "awayTeam": "Engeland",
+      "kickoff": "2026-06-27T17:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
+    },
+    {
+      "id": 73,
+      "group": "L",
+      "homeTeam": "Kroatie",
+      "awayTeam": "Ghana",
+      "kickoff": "2026-06-27T20:00:00.000Z",
+      "homeScore": null,
+      "awayScore": null
     }
   ],
-  "predictions": []
+  "predictions": [],
+  "settings": {
+    "deadlineMinutesBeforeKickoff": 0
+  }
 }
