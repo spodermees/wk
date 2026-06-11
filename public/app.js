@@ -12,6 +12,8 @@ const logoutBtn = document.getElementById("logoutBtn");
 const deadlineForm = document.getElementById("deadlineForm");
 const deadlineInput = document.getElementById("deadlineInput");
 const themeButtons = Array.from(document.querySelectorAll(".theme-btn"));
+const apiBaseMeta = document.querySelector('meta[name="api-base-url"]');
+const API_BASE_URL = (apiBaseMeta?.content || "").trim().replace(/\/+$/, "");
 
 let currentUser = null;
 let matches = [];
@@ -44,7 +46,9 @@ function showMessage(text, type = "") {
 }
 
 async function api(path, options = {}) {
-  const response = await fetch(path, {
+  const targetPath = path.startsWith("/") ? path : `/${path}`;
+  const response = await fetch(`${API_BASE_URL}${targetPath}`, {
+    credentials: "include",
     headers: {
       "Content-Type": "application/json"
     },

@@ -3,6 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const session = require("express-session");
+const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,6 +13,11 @@ const SCORING = {
   tendencyPoints: 1
 };
 const DEFAULT_DEADLINE_MINUTES_BEFORE_KICKOFF = 0;
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const isProduction = process.env.NODE_ENV === "production";
 
 const GROUPS = {
   A: ["Mexico", "Zuid-Afrika", "Zuid-Korea", "Tsjechie"],
@@ -245,6 +251,23 @@ function requireAuth(req, res, next) {
 ensureDataFile();
 
 app.use(express.json());
+app.set("trust proxy", 1);
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (ALLOWED_ORIGINS.length === 0 || ALLOWED_ORIGINS.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("CORS niet toegestaan voor deze origin"));
+    },
+    credentials: true
+  })
+);
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "wk-super-secret",
@@ -252,7 +275,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      sameSite: "lax"
+      sameSite: isProduction ? "none" : "lax",
+      secure: isProduction
     }
   })
 );

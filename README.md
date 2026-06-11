@@ -48,6 +48,63 @@ npm start
 http://localhost:3000
 ```
 
+## Online met vrienden (GitHub publish)
+
+GitHub Pages kan alleen statische bestanden hosten. Deze app heeft ook een backend (API + login), dus je deployt:
+
+- Frontend: GitHub Pages
+- Backend: bijvoorbeeld Render/Railway/Fly.io
+
+### 1. Backend deployen (voorbeeld: Render)
+
+1. Push deze repo naar GitHub
+2. Maak op Render een nieuwe Web Service van je repo
+3. Build command: `npm install`
+4. Start command: `npm start`
+5. Zet environment variables:
+   - `NODE_ENV=production`
+   - `SESSION_SECRET=<kies een lange geheime string>`
+   - `ALLOWED_ORIGINS=https://<jouw-gebruikersnaam>.github.io`
+
+Resultaat: je krijgt een backend URL zoals `https://wk-poule.onrender.com`.
+
+Sneller: deze repo bevat nu ook [render.yaml](render.yaml). Op Render kun je daardoor direct een Blueprint deploy doen.
+
+### 1b. Backend deployen (Railway)
+
+Deze repo bevat [railway.json](railway.json), zodat Railway automatisch `npm start` gebruikt.
+
+1. Maak in Railway een nieuw project van je GitHub repo
+2. Zet deze environment variables:
+   - `NODE_ENV=production`
+   - `SESSION_SECRET=<kies een lange geheime string>`
+   - `ALLOWED_ORIGINS=https://<jouw-gebruikersnaam>.github.io`
+3. Deploy
+
+Tip: begin met [.env.example](.env.example) als checklist van alle variabelen.
+
+### 2. Frontend op GitHub Pages
+
+1. Zet in [public/index.html](public/index.html#L1) de meta-tag `api-base-url` op je backend URL:
+
+```html
+<meta name="api-base-url" content="https://wk-poule.onrender.com" />
+```
+
+1. Publiceer de `public` map op GitHub Pages (of kopieer de inhoud naar een branch/folder die als Pages source staat)
+
+### 3. Wat er nu al in code geregeld is
+
+- Frontend gebruikt automatisch de ingestelde `api-base-url` voor alle API-calls
+- API-calls sturen cookies mee (`credentials: include`)
+- Backend ondersteunt CORS met credentials via `ALLOWED_ORIGINS`
+- Productiecookies staan op `SameSite=None; Secure` zodat login werkt tussen GitHub Pages en backend
+
+### Belangrijk
+
+- `express-session` gebruikt nu nog memory store. Voor serieuzer gebruik (en herstarts) is Redis of database session store beter.
+- `data/db.json` is bestand-opslag. Op sommige hosts is disk niet blijvend. Voor echte betrouwbaarheid: Postgres/SQLite met persistent storage.
+
 ## Belangrijke bestanden
 
 - `server.js`: backend API en sessielogica
