@@ -27,6 +27,19 @@
       </header>
 
       <section id="authView" class="panel auth-panel">
+        <div class="auth-box backend-box">
+          <h2>Backend koppeling</h2>
+          <p class="meta">Voor GitHub Pages: vul je backend URL in, bijvoorbeeld https://wk-poule.onrender.com</p>
+          <form id="apiConfigForm" class="stack">
+            <label>
+              Backend URL
+              <input id="apiBaseInput" placeholder="https://jouw-backend-url" />
+            </label>
+            <button type="submit" class="secondary">Verbinding opslaan</button>
+            <p id="apiStatus" class="meta"></p>
+          </form>
+        </div>
+
         <div class="auth-box">
           <h2>Inloggen</h2>
           <form id="loginForm" class="stack">

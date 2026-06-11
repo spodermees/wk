@@ -55,6 +55,15 @@ GitHub Pages kan alleen statische bestanden hosten. Deze app heeft ook een backe
 - Frontend: GitHub Pages
 - Backend: bijvoorbeeld Render/Railway/Fly.io
 
+### 0. GitHub Pages automatisch publiceren
+
+Deze repo bevat nu een workflow op [ .github/workflows/deploy-pages.yml ](.github/workflows/deploy-pages.yml) die automatisch de [public](public) map publiceert naar GitHub Pages bij push naar `main`.
+
+Zet in GitHub eenmalig:
+
+1. Ga naar Settings > Pages
+1. Source: GitHub Actions
+
 ### 1. Backend deployen (voorbeeld: Render)
 
 1. Push deze repo naar GitHub
@@ -91,7 +100,14 @@ Tip: begin met [.env.example](.env.example) als checklist van alle variabelen.
 <meta name="api-base-url" content="https://wk-poule.onrender.com" />
 ```
 
-1. Publiceer de `public` map op GitHub Pages (of kopieer de inhoud naar een branch/folder die als Pages source staat)
+1. Push naar `main` en de workflow publiceert de frontend automatisch.
+
+Alternatief zonder codewijziging in index:
+
+1. Open je Pages URL met query parameter `api`, bijvoorbeeld:
+1. `https://spodermees.github.io/wk/?api=https://wk-poule.onrender.com`
+
+De app onthoudt deze backend URL lokaal in de browser.
 
 ### 3. Wat er nu al in code geregeld is
 

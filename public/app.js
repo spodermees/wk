@@ -11,9 +11,42 @@ const matchForm = document.getElementById("matchForm");
 const logoutBtn = document.getElementById("logoutBtn");
 const deadlineForm = document.getElementById("deadlineForm");
 const deadlineInput = document.getElementById("deadlineInput");
+const apiConfigForm = document.getElementById("apiConfigForm");
+const apiBaseInput = document.getElementById("apiBaseInput");
+const apiStatus = document.getElementById("apiStatus");
 const themeButtons = Array.from(document.querySelectorAll(".theme-btn"));
 const apiBaseMeta = document.querySelector('meta[name="api-base-url"]');
-const API_BASE_URL = (apiBaseMeta?.content || "").trim().replace(/\/+$/, "");
+
+function normalizeApiBaseUrl(value) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) {
+    return "";
+  }
+
+  if (!/^https?:\/\//i.test(trimmed) && /^[\w.-]+\.[a-z]{2,}/i.test(trimmed)) {
+    return `https://${trimmed}`.replace(/\/+$/, "");
+  }
+
+  return trimmed.replace(/\/+$/, "");
+}
+
+function resolveApiBaseUrl() {
+  const fromQuery = new URLSearchParams(window.location.search).get("api");
+  if (fromQuery) {
+    const normalized = normalizeApiBaseUrl(fromQuery);
+    localStorage.setItem("wk-api-base-url", normalized);
+    return normalized;
+  }
+
+  const fromStorage = normalizeApiBaseUrl(localStorage.getItem("wk-api-base-url"));
+  if (fromStorage) {
+    return fromStorage;
+  }
+
+  return normalizeApiBaseUrl(apiBaseMeta?.content);
+}
+
+let apiBaseUrl = resolveApiBaseUrl();
 
 let currentUser = null;
 let matches = [];
@@ -45,9 +78,48 @@ function showMessage(text, type = "") {
   messageEl.className = `message ${type}`.trim();
 }
 
+function renderApiStatus() {
+  if (!apiStatus) {
+    return;
+  }
+
+  if (apiBaseUrl) {
+    apiStatus.textContent = `Actieve backend: ${apiBaseUrl}`;
+    return;
+  }
+
+  if (window.location.hostname.endsWith("github.io")) {
+    apiStatus.textContent = "Geen backend ingesteld. Vul hierboven de backend URL in.";
+  } else {
+    apiStatus.textContent = "Lokale modus: backend URL niet nodig.";
+  }
+}
+
+function setApiBaseUrl(value, persist = true) {
+  apiBaseUrl = normalizeApiBaseUrl(value);
+
+  if (apiBaseInput) {
+    apiBaseInput.value = apiBaseUrl;
+  }
+
+  if (persist) {
+    if (apiBaseUrl) {
+      localStorage.setItem("wk-api-base-url", apiBaseUrl);
+    } else {
+      localStorage.removeItem("wk-api-base-url");
+    }
+  }
+
+  renderApiStatus();
+}
+
 async function api(path, options = {}) {
+  if (!apiBaseUrl && window.location.hostname.endsWith("github.io")) {
+    throw new Error("Backend URL ontbreekt. Open de pagina met ?api=https://jouw-backend-url");
+  }
+
   const targetPath = path.startsWith("/") ? path : `/${path}`;
-  const response = await fetch(`${API_BASE_URL}${targetPath}`, {
+  const response = await fetch(`${apiBaseUrl}${targetPath}`, {
     credentials: "include",
     headers: {
       "Content-Type": "application/json"
@@ -206,6 +278,28 @@ loginForm.addEventListener("submit", async (event) => {
   }
 });
 
+if (apiConfigForm) {
+  apiConfigForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const candidate = apiBaseInput ? apiBaseInput.value : "";
+    setApiBaseUrl(candidate);
+
+    try {
+      const payload = await api("/api/me");
+      currentUser = payload.user;
+      toggleViews();
+
+      if (currentUser) {
+        await refreshData();
+      }
+
+      showMessage("Backend gekoppeld. Inloggen en registreren zijn klaar voor gebruik.", "success");
+    } catch (error) {
+      showMessage(`Backend niet bereikbaar: ${error.message}`, "error");
+    }
+  });
+}
+
 registerForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const formData = new FormData(registerForm);
@@ -347,4 +441,5 @@ async function bootstrap() {
 }
 
 initTheme();
+setApiBaseUrl(apiBaseUrl, false);
 bootstrap();
