@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="api-base-url" content="" />
     <title>WK Poule Tracker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,95 +18,46 @@
       <header class="hero">
         <p class="kicker">WK POULE</p>
         <h1>Voorspel elke wedstrijd en strijd om de koppositie.</h1>
-        <p class="subtitle">Iedereen maakt een account, vult scores in en ziet direct de ranglijst.</p>
         <div class="theme-switch" role="group" aria-label="Kies thema">
           <button type="button" class="theme-btn is-active" data-theme="dark">Night</button>
           <button type="button" class="theme-btn" data-theme="light">Day</button>
         </div>
       </header>
 
-      <section id="authView" class="panel auth-panel">
-        <div class="auth-box backend-box">
-          <h2>Backend koppeling</h2>
-          <p class="meta">Voor GitHub Pages: vul je backend URL in, bijvoorbeeld https://wk-poule.onrender.com</p>
-          <form id="apiConfigForm" class="stack">
-            <label>
-              Backend URL
-              <input id="apiBaseInput" placeholder="https://jouw-backend-url" />
-            </label>
-            <button type="submit" class="secondary">Verbinding opslaan</button>
-            <p id="apiStatus" class="meta"></p>
-          </form>
+      <section class="panel import-panel">
+        <h2>Laad je poulebestand</h2>
+        <p class="meta">
+          Kies een <code>.txt</code> of <code>.md</code> bestand, of plak de inhoud hieronder.<br />
+          Per wedstrijd een blok, gescheiden door een lege regel:<br />
+          Eerste regel = wedstrijdnaam, daarna per speler: <code>naam score</code><br />
+          Gebruik <code>uitslag 2-1</code> voor de echte stand. Spelers worden automatisch herkend.
+        </p>
+        <div class="score-row" style="align-items:center">
+          <label class="file-label">
+            <input id="importFileInput" type="file" accept=".txt,.md" />
+            <span>Bestand kiezen</span>
+          </label>
+          <button id="loadRemoteBtn" class="secondary">Laad GitHub data</button>
+          <button id="loadBtn">Laden &amp; berekenen</button>
+          <button id="clearBtn" class="secondary">Wissen</button>
         </div>
-
-        <div class="auth-box">
-          <h2>Inloggen</h2>
-          <form id="loginForm" class="stack">
-            <label>
-              Gebruikersnaam
-              <input name="username" required minlength="3" />
-            </label>
-            <label>
-              Wachtwoord
-              <input name="password" type="password" required minlength="4" />
-            </label>
-            <button type="submit">Log in</button>
-          </form>
-        </div>
-
-        <div class="auth-box accent">
-          <h2>Nieuw account</h2>
-          <form id="registerForm" class="stack">
-            <label>
-              Gebruikersnaam
-              <input name="username" required minlength="3" />
-            </label>
-            <label>
-              Wachtwoord
-              <input name="password" type="password" required minlength="4" />
-            </label>
-            <button type="submit">Registreer</button>
-          </form>
-        </div>
+        <textarea id="importPasteArea" rows="8" placeholder="mexico - zuid afrika&#10;uitslag 2-1&#10;mees 3-1&#10;maarten 2-1&#10;sammy 1-2&#10;job 2-2&#10;&#10;duitsland - brazilie&#10;mees 1-0&#10;maarten 2-1&#10;sammy 0-0&#10;job 1-1"></textarea>
       </section>
 
-      <section id="appView" class="hidden">
-        <div class="topbar panel">
-          <div>
-            <p class="label">Ingelogd als</p>
-            <p id="currentUser" class="current-user"></p>
-          </div>
-          <button id="logoutBtn" class="secondary">Uitloggen</button>
-        </div>
-
-        <section class="panel deadline-panel">
-          <h3>Deadline instellingen</h3>
-          <p class="meta">Voorspellen sluit zoveel minuten voor aftrap.</p>
-          <form id="deadlineForm" class="score-row">
-            <input id="deadlineInput" type="number" min="0" max="1440" step="1" />
-            <button type="submit">Deadline opslaan</button>
-          </form>
-        </section>
-
+      <section id="resultsView" class="hidden">
         <div class="grid">
-          <section class="panel">
-            <h3>Nieuwe wedstrijd</h3>
-            <form id="matchForm" class="stack inline-form">
-              <input name="homeTeam" placeholder="Thuisteam" required />
-              <input name="awayTeam" placeholder="Uitteam" required />
-              <input name="kickoff" type="datetime-local" required />
-              <button type="submit">Toevoegen</button>
-            </form>
-          </section>
-
           <section class="panel">
             <h3>Ranglijst</h3>
             <div id="leaderboard" class="leaderboard"></div>
           </section>
+          <section class="panel">
+            <h3>Punten per wedstrijd</h3>
+            <div id="pointsTable"></div>
+          </section>
         </div>
 
         <section class="panel">
-          <h3>Wedstrijden</h3>
+          <h3>Wedstrijden &amp; voorspellingen</h3>
           <div id="matches" class="matches"></div>
         </section>
       </section>

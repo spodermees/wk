@@ -1,445 +1,285 @@
-const authView = document.getElementById("authView");
-const appView = document.getElementById("appView");
-const messageEl = document.getElementById("message");
-const matchesEl = document.getElementById("matches");
-const leaderboardEl = document.getElementById("leaderboard");
-const currentUserEl = document.getElementById("currentUser");
-
-const loginForm = document.getElementById("loginForm");
-const registerForm = document.getElementById("registerForm");
-const matchForm = document.getElementById("matchForm");
-const logoutBtn = document.getElementById("logoutBtn");
-const deadlineForm = document.getElementById("deadlineForm");
-const deadlineInput = document.getElementById("deadlineInput");
-const apiConfigForm = document.getElementById("apiConfigForm");
-const apiBaseInput = document.getElementById("apiBaseInput");
-const apiStatus = document.getElementById("apiStatus");
+﻿// ========== THEMA ==========
 const themeButtons = Array.from(document.querySelectorAll(".theme-btn"));
-const apiBaseMeta = document.querySelector('meta[name="api-base-url"]');
-
-function normalizeApiBaseUrl(value) {
-  const trimmed = String(value || "").trim();
-  if (!trimmed) {
-    return "";
-  }
-
-  if (!/^https?:\/\//i.test(trimmed) && /^[\w.-]+\.[a-z]{2,}/i.test(trimmed)) {
-    return `https://${trimmed}`.replace(/\/+$/, "");
-  }
-
-  return trimmed.replace(/\/+$/, "");
-}
-
-function resolveApiBaseUrl() {
-  const fromQuery = new URLSearchParams(window.location.search).get("api");
-  if (fromQuery) {
-    const normalized = normalizeApiBaseUrl(fromQuery);
-    localStorage.setItem("wk-api-base-url", normalized);
-    return normalized;
-  }
-
-  const fromStorage = normalizeApiBaseUrl(localStorage.getItem("wk-api-base-url"));
-  if (fromStorage) {
-    return fromStorage;
-  }
-
-  return normalizeApiBaseUrl(apiBaseMeta?.content);
-}
-
-let apiBaseUrl = resolveApiBaseUrl();
-
-let currentUser = null;
-let matches = [];
-let settings = {
-  scoring: {
-    exactPoints: 3,
-    tendencyPoints: 1
-  },
-  deadlineMinutesBeforeKickoff: 0
-};
 
 function applyTheme(theme) {
-  const selectedTheme = theme === "light" ? "light" : "dark";
-  document.body.dataset.theme = selectedTheme;
-  localStorage.setItem("wk-theme", selectedTheme);
-
-  themeButtons.forEach((button) => {
-    button.classList.toggle("is-active", button.dataset.theme === selectedTheme);
-  });
+  const t = theme === "light" ? "light" : "dark";
+  document.body.dataset.theme = t;
+  localStorage.setItem("wk-theme", t);
+  themeButtons.forEach((b) => b.classList.toggle("is-active", b.dataset.theme === t));
 }
 
-function initTheme() {
-  const storedTheme = localStorage.getItem("wk-theme");
-  applyTheme(storedTheme || "dark");
-}
+themeButtons.forEach((b) => b.addEventListener("click", () => applyTheme(b.dataset.theme)));
+applyTheme(localStorage.getItem("wk-theme") || "dark");
+
+// ========== DOM ==========
+const importFileInput = document.getElementById("importFileInput");
+const importPasteArea = document.getElementById("importPasteArea");
+const loadRemoteBtn = document.getElementById("loadRemoteBtn");
+const loadBtn = document.getElementById("loadBtn");
+const clearBtn = document.getElementById("clearBtn");
+const resultsView = document.getElementById("resultsView");
+const leaderboardEl = document.getElementById("leaderboard");
+const pointsTableEl = document.getElementById("pointsTable");
+const matchesEl = document.getElementById("matches");
+const messageEl = document.getElementById("message");
 
 function showMessage(text, type = "") {
   messageEl.textContent = text;
   messageEl.className = `message ${type}`.trim();
 }
 
-function renderApiStatus() {
-  if (!apiStatus) {
-    return;
-  }
+async function loadRemoteData(auto = false) {
+  try {
+    const response = await fetch(`./wedstrijden-data.md?v=${Date.now()}`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
 
-  if (apiBaseUrl) {
-    apiStatus.textContent = `Actieve backend: ${apiBaseUrl}`;
-    return;
-  }
+    const text = await response.text();
+    if (!text.trim()) {
+      throw new Error("Bestand is leeg");
+    }
 
-  if (window.location.hostname.endsWith("github.io")) {
-    apiStatus.textContent = "Geen backend ingesteld. Vul hierboven de backend URL in.";
-  } else {
-    apiStatus.textContent = "Lokale modus: backend URL niet nodig.";
+    importPasteArea.value = text;
+    loadAndRender(text);
+
+    if (!auto) {
+      showMessage("GitHub data geladen.", "success");
+    }
+    return true;
+  } catch (error) {
+    if (!auto) {
+      showMessage(`GitHub data laden mislukt: ${error.message}`, "error");
+    }
+    return false;
   }
 }
 
-function setApiBaseUrl(value, persist = true) {
-  apiBaseUrl = normalizeApiBaseUrl(value);
+// ========== PARSER ==========
+// Format: blokken gescheiden door lege regels.
+// Eerste regel van elk blok = wedstrijdnaam.
+// Daarna per regel: "naam score"  bv "mees 3-1"
+// "uitslag 2-1" = de echte uitslag van die wedstrijd.
+// Spelers worden automatisch herkend.
 
-  if (apiBaseInput) {
-    apiBaseInput.value = apiBaseUrl;
-  }
+function parseScore(str) {
+  if (!str) return null;
+  const m = String(str).trim().match(/^(\d+)\s*[-\u2013]\s*(\d+)$/);
+  if (!m) return null;
+  return { home: Number(m[1]), away: Number(m[2]) };
+}
 
-  if (persist) {
-    if (apiBaseUrl) {
-      localStorage.setItem("wk-api-base-url", apiBaseUrl);
-    } else {
-      localStorage.removeItem("wk-api-base-url");
+function parsePredLine(line) {
+  const m = line.match(/^(.+?)\s+(\d+\s*[-\u2013]\s*\d+)$/);
+  if (!m) return null;
+  return { name: m[1].trim(), score: parseScore(m[2]) };
+}
+
+function parseFile(text) {
+  const blocks = text.split(/\n\s*\n/).map(function(b){ return b.trim(); }).filter(Boolean);
+  const matches = [];
+  const allPredNames = [];
+
+  for (var bi = 0; bi < blocks.length; bi++) {
+    var lines = blocks[bi].split("\n").map(function(l){ return l.trim(); }).filter(Boolean);
+    if (!lines.length) continue;
+
+    var titleLine = null;
+    var startIdx = 0;
+    for (var i = 0; i < lines.length; i++) {
+      if (lines[i].startsWith("#")) continue;
+      if (parsePredLine(lines[i])) continue; // score-regel, geen titel
+      titleLine = lines[i];
+      startIdx = i + 1;
+      break;
+    }
+    if (!titleLine) continue;
+
+    var title = titleLine.replace(/^#+\s*/, "").trim();
+    var result = null;
+    var predictions = {};
+
+    for (var j = startIdx; j < lines.length; j++) {
+      var line = lines[j];
+      if (line.startsWith("#")) continue;
+      var parsed = parsePredLine(line);
+      if (!parsed) continue;
+      var nameLower = parsed.name.toLowerCase();
+      if (nameLower === "uitslag" || nameLower === "result" || nameLower === "score") {
+        result = parsed.score;
+      } else {
+        predictions[parsed.name] = parsed.score;
+        if (allPredNames.indexOf(parsed.name) === -1) allPredNames.push(parsed.name);
+      }
+    }
+
+    if (Object.keys(predictions).length > 0 || result) {
+      matches.push({ title: title, result: result, predictions: predictions });
     }
   }
 
-  renderApiStatus();
+  return { players: allPredNames, matches: matches };
+}
+// ========== PUNTEN ==========
+const EXACT = 3;
+const TENDENCY = 1;
+
+function calcPoints(result, prediction) {
+  if (!result || !prediction) return null;
+  if (prediction.home === result.home && prediction.away === result.away) return EXACT;
+  if (Math.sign(prediction.home - prediction.away) === Math.sign(result.home - result.away)) return TENDENCY;
+  return 0;
 }
 
-async function api(path, options = {}) {
-  if (!apiBaseUrl && window.location.hostname.endsWith("github.io")) {
-    throw new Error("Backend URL ontbreekt. Open de pagina met ?api=https://jouw-backend-url");
-  }
-
-  const targetPath = path.startsWith("/") ? path : `/${path}`;
-  const response = await fetch(`${apiBaseUrl}${targetPath}`, {
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    ...options
-  });
-
-  let payload = {};
-  try {
-    payload = await response.json();
-  } catch {
-    payload = {};
-  }
-
-  if (!response.ok) {
-    throw new Error(payload.error || "Er ging iets mis");
-  }
-
-  return payload;
-}
-
-function formatDate(iso) {
-  return new Intl.DateTimeFormat("nl-NL", {
-    dateStyle: "medium",
-    timeStyle: "short"
-  }).format(new Date(iso));
-}
-
-function renderMatches() {
-  if (matches.length === 0) {
-    matchesEl.innerHTML = "<p>Geen wedstrijden toegevoegd.</p>";
-    return;
-  }
-
-  matchesEl.innerHTML = matches
-    .sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff))
-    .map((match) => {
-      const prediction = match.myPrediction;
-      const isLocked = Boolean(match.predictionLocked);
-      const lockLabel = isLocked ? "Deadline voorbij" : "Open voor voorspellen";
-      const lockClass = isLocked ? "badge badge-danger" : "badge";
-      const disabledAttr = isLocked ? "disabled" : "";
-      const predictionText = prediction
-        ? `Mijn voorspelling: ${prediction.homeScore}-${prediction.awayScore}`
-        : "Nog geen voorspelling";
-
-      const resultText =
-        match.homeScore === null || match.awayScore === null
-          ? "Nog geen uitslag"
-          : `Uitslag: ${match.homeScore}-${match.awayScore}`;
-
-      const pointsText =
-        match.homeScore === null || match.awayScore === null
-          ? "Punten: nog niet berekend"
-          : `Punten op deze wedstrijd: ${match.myPoints}`;
-
-      const groupText = match.group ? `Poule ${match.group}` : "Losse wedstrijd";
-      const deadlineText = `${settings.deadlineMinutesBeforeKickoff} min voor aftrap`;
-
-      return `
-        <article class="match-card" data-match-id="${match.id}">
-          <div class="match-head">
-            <div>
-              <div class="teams">${match.homeTeam} - ${match.awayTeam}</div>
-              <div class="meta">${groupText} | Aftrap: ${formatDate(match.kickoff)} | Deadline: ${deadlineText}</div>
-            </div>
-            <span class="${lockClass}">${lockLabel}</span>
-          </div>
-
-          <div class="meta">${resultText}</div>
-
-          <div class="score-row">
-            <input type="number" min="0" step="1" class="pred-home" placeholder="Thuis" value="${prediction ? prediction.homeScore : ""}" ${disabledAttr} />
-            <input type="number" min="0" step="1" class="pred-away" placeholder="Uit" value="${prediction ? prediction.awayScore : ""}" ${disabledAttr} />
-            <button class="save-prediction" ${disabledAttr}>Voorspelling opslaan</button>
-          </div>
-
-          <div class="score-row">
-            <input type="number" min="0" step="1" class="res-home" placeholder="Uitslag thuis" value="${match.homeScore ?? ""}" />
-            <input type="number" min="0" step="1" class="res-away" placeholder="Uitslag uit" value="${match.awayScore ?? ""}" />
-            <button class="save-result secondary">Uitslag opslaan</button>
-          </div>
-
-          <div class="meta">${predictionText} | ${pointsText}</div>
-        </article>
-      `;
+function computeLeaderboard(players, matches) {
+  return players
+    .map((player) => {
+      let points = 0;
+      let exact = 0;
+      matches.forEach((m) => {
+        const pts = calcPoints(m.result, m.predictions[player]);
+        if (pts !== null) {
+          points += pts;
+          if (pts === EXACT) exact++;
+        }
+      });
+      return { player, points, exact };
     })
-    .join("");
+    .sort((a, b) => b.points - a.points);
+}
+
+// ========== RENDEREN ==========
+function formatDate(iso) {
+  return new Intl.DateTimeFormat("nl-NL", { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
 }
 
 function renderLeaderboard(rows) {
-  if (rows.length === 0) {
-    leaderboardEl.innerHTML = "<p>Nog geen spelers.</p>";
-    return;
-  }
-
   leaderboardEl.innerHTML = rows
     .map(
-      (row, index) => `
+      (row, i) => `
       <div class="leaderboard-row">
-        <span class="rank">#${index + 1}</span>
-        <span>${row.username}<br /><small>Exact: ${row.exactHits} (${row.exactPoints} pt)</small></span>
+        <span class="rank">#${i + 1}</span>
+        <span>${row.player}<br /><small>Exact: ${row.exact}× (${row.exact * EXACT} pt)</small></span>
         <strong>${row.points} pt</strong>
-      </div>
-    `
+      </div>`
     )
     .join("");
 }
 
-async function refreshData() {
-  const [settingsPayload, matchesPayload, leaderboardPayload] = await Promise.all([
-    api("/api/settings"),
-    api("/api/matches"),
-    api("/api/leaderboard")
-  ]);
-
-  settings = settingsPayload;
-  deadlineInput.value = settings.deadlineMinutesBeforeKickoff;
-  matches = matchesPayload.matches;
-  renderMatches();
-  renderLeaderboard(leaderboardPayload.leaderboard);
+function renderPointsTable(players, matches) {
+  const played = matches.filter((m) => m.result);
+  if (!played.length) {
+    pointsTableEl.innerHTML = "<p class='meta'>Nog geen uitslagen.</p>";
+    return;
+  }
+  const header = `<tr><th>Wedstrijd</th>${players.map((p) => `<th>${p}</th>`).join("")}</tr>`;
+  const rows = played
+    .map((m) => {
+      const cells = players
+        .map((p) => {
+          const pts = calcPoints(m.result, m.predictions[p]);
+          const pred = m.predictions[p];
+          const predStr = pred ? `${pred.home}-${pred.away}` : "-";
+          const cls = pts === EXACT ? "pts-exact" : pts === TENDENCY ? "pts-tendency" : pts === 0 ? "pts-zero" : "";
+          return `<td class="${cls}">${predStr}<br/><small>${pts !== null ? pts + " pt" : "-"}</small></td>`;
+        })
+        .join("");
+      return `<tr><td><strong>${m.title}</strong><br/><small>${m.result.home}-${m.result.away}</small></td>${cells}</tr>`;
+    })
+    .join("");
+  pointsTableEl.innerHTML = `<div class="table-wrap"><table class="pts-table">${header}${rows}</table></div>`;
 }
 
-function toggleViews() {
-  if (currentUser) {
-    authView.classList.add("hidden");
-    appView.classList.remove("hidden");
-    currentUserEl.textContent = currentUser.username;
-  } else {
-    appView.classList.add("hidden");
-    authView.classList.remove("hidden");
-    currentUserEl.textContent = "";
-  }
+function renderMatches(players, matches) {
+  matchesEl.innerHTML = matches
+    
+    .map((m) => {
+      const resultText = m.result ? `Uitslag: ${m.result.home}-${m.result.away}` : "Nog geen uitslag";
+      const predsHtml = players.length
+        ? players
+            .map((p) => {
+              const pred = m.predictions[p];
+              const pts = calcPoints(m.result, pred);
+              const predStr = pred ? `${pred.home}-${pred.away}` : "-";
+              const badge =
+                pts === EXACT
+                  ? `<span class="badge badge-ok">Exact +${EXACT}</span>`
+                  : pts === TENDENCY
+                  ? `<span class="badge badge-warn">Neiging +${TENDENCY}</span>`
+                  : pts === 0
+                  ? `<span class="badge badge-danger">0 pt</span>`
+                  : "";
+              return `<span class="pred-chip">${p}: <strong>${predStr}</strong> ${badge}</span>`;
+            })
+            .join("")
+        : "";
+      return `
+        <article class="match-card">
+          <div class="match-head">
+            <div class="teams">${m.title}</div>
+          </div>
+          <div class="meta">${resultText}</div>
+          <div class="pred-row">${predsHtml}</div>
+        </article>`;
+    })
+    .join("");
 }
 
-loginForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const formData = new FormData(loginForm);
-
-  try {
-    const payload = await api("/api/login", {
-      method: "POST",
-      body: JSON.stringify({
-        username: formData.get("username"),
-        password: formData.get("password")
-      })
-    });
-
-    currentUser = payload.user;
-    toggleViews();
-    await refreshData();
-    showMessage("Je bent ingelogd.", "success");
-    loginForm.reset();
-  } catch (error) {
-    showMessage(error.message, "error");
+// ========== LADEN ==========
+function loadAndRender(text) {
+  const { players, matches } = parseFile(text);
+  if (!matches.length) {
+    showMessage("Geen geldige wedstrijden gevonden. Controleer het format.", "error");
+    return;
   }
-});
-
-if (apiConfigForm) {
-  apiConfigForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const candidate = apiBaseInput ? apiBaseInput.value : "";
-    setApiBaseUrl(candidate);
-
-    try {
-      const payload = await api("/api/me");
-      currentUser = payload.user;
-      toggleViews();
-
-      if (currentUser) {
-        await refreshData();
-      }
-
-      showMessage("Backend gekoppeld. Inloggen en registreren zijn klaar voor gebruik.", "success");
-    } catch (error) {
-      showMessage(`Backend niet bereikbaar: ${error.message}`, "error");
-    }
-  });
-}
-
-registerForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const formData = new FormData(registerForm);
-
-  try {
-    const payload = await api("/api/register", {
-      method: "POST",
-      body: JSON.stringify({
-        username: formData.get("username"),
-        password: formData.get("password")
-      })
-    });
-
-    currentUser = payload.user;
-    toggleViews();
-    await refreshData();
-    showMessage("Account aangemaakt en ingelogd.", "success");
-    registerForm.reset();
-  } catch (error) {
-    showMessage(error.message, "error");
-  }
-});
-
-logoutBtn.addEventListener("click", async () => {
-  try {
-    await api("/api/logout", { method: "POST" });
-    currentUser = null;
-    matches = [];
-    toggleViews();
-    matchesEl.innerHTML = "";
-    leaderboardEl.innerHTML = "";
-    showMessage("Uitgelogd.", "success");
-  } catch (error) {
-    showMessage(error.message, "error");
-  }
-});
-
-matchForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const formData = new FormData(matchForm);
-
-  try {
-    await api("/api/matches", {
-      method: "POST",
-      body: JSON.stringify({
-        homeTeam: formData.get("homeTeam"),
-        awayTeam: formData.get("awayTeam"),
-        kickoff: formData.get("kickoff")
-      })
-    });
-
-    await refreshData();
-    showMessage("Wedstrijd toegevoegd.", "success");
-    matchForm.reset();
-  } catch (error) {
-    showMessage(error.message, "error");
-  }
-});
-
-deadlineForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  try {
-    const deadlineMinutesBeforeKickoff = Number(deadlineInput.value);
-    await api("/api/settings", {
-      method: "PATCH",
-      body: JSON.stringify({ deadlineMinutesBeforeKickoff })
-    });
-
-    await refreshData();
-    showMessage("Deadline instellingen opgeslagen.", "success");
-  } catch (error) {
-    showMessage(error.message, "error");
-  }
-});
-
-matchesEl.addEventListener("click", async (event) => {
-  const card = event.target.closest(".match-card");
-  if (!card) {
+  if (!players.length) {
+    showMessage("Geen spelers gevonden. Zorg dat voorspellingen op een nieuwe regel staan: naam score (bv: mees 3-1)", "error");
     return;
   }
 
-  const matchId = Number(card.dataset.matchId);
+  const lb = computeLeaderboard(players, matches);
+  renderLeaderboard(lb);
+  renderPointsTable(players, matches);
+  renderMatches(players, matches);
+  resultsView.classList.remove("hidden");
+  showMessage(`${matches.length} wedstrijden geladen voor ${players.length} spelers.`, "success");
 
-  try {
-    if (event.target.classList.contains("save-prediction")) {
-      if (event.target.disabled) {
-        showMessage("Deadline voorbij voor deze wedstrijd.", "error");
-        return;
-      }
-
-      const homeScore = Number(card.querySelector(".pred-home").value);
-      const awayScore = Number(card.querySelector(".pred-away").value);
-
-      await api("/api/predictions", {
-        method: "POST",
-        body: JSON.stringify({ matchId, homeScore, awayScore })
-      });
-
-      await refreshData();
-      showMessage("Voorspelling opgeslagen.", "success");
-    }
-
-    if (event.target.classList.contains("save-result")) {
-      const homeScore = Number(card.querySelector(".res-home").value);
-      const awayScore = Number(card.querySelector(".res-away").value);
-
-      await api(`/api/matches/${matchId}/result`, {
-        method: "PATCH",
-        body: JSON.stringify({ homeScore, awayScore })
-      });
-
-      await refreshData();
-      showMessage("Uitslag opgeslagen en ranglijst bijgewerkt.", "success");
-    }
-  } catch (error) {
-    showMessage(error.message, "error");
-  }
-});
-
-themeButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    applyTheme(button.dataset.theme || "dark");
-  });
-});
-
-async function bootstrap() {
-  try {
-    const payload = await api("/api/me");
-    currentUser = payload.user;
-    toggleViews();
-
-    if (currentUser) {
-      await refreshData();
-    }
-  } catch (error) {
-    showMessage(error.message, "error");
-  }
+  // Sla tekst op zodat hij na refresh bewaard blijft
+  localStorage.setItem("wk-poule-text", text);
 }
 
-initTheme();
-setApiBaseUrl(apiBaseUrl, false);
-bootstrap();
+loadBtn.addEventListener("click", () => {
+  const text = importPasteArea.value.trim();
+  if (!text) { showMessage("Geen tekst om te laden.", "error"); return; }
+  loadAndRender(text);
+});
+
+if (loadRemoteBtn) {
+  loadRemoteBtn.addEventListener("click", () => {
+    loadRemoteData(false);
+  });
+}
+
+clearBtn.addEventListener("click", () => {
+  importPasteArea.value = "";
+  resultsView.classList.add("hidden");
+  messageEl.textContent = "";
+  localStorage.removeItem("wk-poule-text");
+});
+
+importFileInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => { importPasteArea.value = ev.target.result; };
+  reader.readAsText(file);
+});
+
+// Herstel vorige sessie
+const saved = localStorage.getItem("wk-poule-text");
+if (saved) {
+  importPasteArea.value = saved;
+  loadAndRender(saved);
+} else {
+  loadRemoteData(true);
+}
